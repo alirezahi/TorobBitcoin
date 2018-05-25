@@ -36,7 +36,6 @@ int main() {
 void innerCompression(bool* a, bool* b, bool* c, bool* d, bool* e, bool* f, bool* g, bool* h){
     bool* t1 = new bool [32];
     bool* t2 = new bool [32];
-
 }
 
 bool* /*32*/ getK(int i){
