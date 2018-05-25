@@ -1,41 +1,136 @@
 #include <iostream>
+#include <array>
 
 using namespace std;
 
 bool* padding(bool *msg, int l);
-int SIZE_OF_BLOCK = 2;
+array<bool, 4> convert_hexa_digit__2_bool(char hex);
+bool* convert_hexa_2_bool(string hex);
+void innerCompression(bool* a);
+
+const int SIZE_OF_BLOCK = 2;
+const int SIZE_OF_ADDRESS = 1;
 bool** parsing(bool*,int);
 void printSth(bool**);
 
 
 int main() {
-    bool msg[] = {0, 1, 0, 1};
+    /*bool msg[] = {0, 1, 0, 1};
     bool *f1 = padding(msg, sizeof(msg) / sizeof(bool));
-    cout << f1;
+    cout << f1;*/
+
+    /*bool* a = new bool[1]{0};
+    cout << a[0] << endl;
+    innerCompression(a);
+    cout << a[0] << endl;*/ // it's ok
+
     return 0;
 }
 
-bool* padding(bool *msg, int l){ // l + 1 + (0...0) = 512*k + 448
-    int numOf0;
+
+void innerCompression(bool* a, bool* b, bool* c, bool* d, bool* e, bool* f, bool* g, bool* h){
+    bool* t1 = new bool [32];
+    bool* t2 = new bool [32];
+
+}
+
+bool* /*32*/ getK(int i){
+    bool ** k = new bool* [64];
+    k[0] = convert_hexa_2_bool("428a298"); //??
+    k[1] = convert_hexa_2_bool("71374491");
+    k[2] = convert_hexa_2_bool("b5c0fbcf");
+    k[3] = convert_hexa_2_bool("e9b5dba5");
+    k[4] = convert_hexa_2_bool("3956c25b");
+    k[5] = convert_hexa_2_bool("59f111f1");
+    k[6] = convert_hexa_2_bool("923f82a4");
+    k[7] = convert_hexa_2_bool("ab1c5ed5");
+    k[8] = convert_hexa_2_bool("d807aa98");
+    k[9] = convert_hexa_2_bool("12835b01");
+    k[10] = convert_hexa_2_bool("243185be");
+    k[11] = convert_hexa_2_bool("550c7dc3");
+    k[12] = convert_hexa_2_bool("72be5d74");
+    k[13] = convert_hexa_2_bool("80deb1fe");
+    k[14] = convert_hexa_2_bool("9bdc06a7");
+    k[15] = convert_hexa_2_bool("c19bf174");
+
+    k[16] = convert_hexa_2_bool("e49b69c1");
+    k[17] = convert_hexa_2_bool("efbe4786");
+    k[18] = convert_hexa_2_bool("0fc19dc6");
+    k[19] = convert_hexa_2_bool("240ca1cc");
+    k[20] = convert_hexa_2_bool("2de92c6f");
+    k[21] = convert_hexa_2_bool("4a7484aa");
+    k[22] = convert_hexa_2_bool("5cb0a9dc");
+    k[23] = convert_hexa_2_bool("76f988da");
+    k[24] = convert_hexa_2_bool("983e5152");
+    k[25] = convert_hexa_2_bool("a831c66d");
+    k[26] = convert_hexa_2_bool("b00327c8");
+    k[27] = convert_hexa_2_bool("bf597fc7");
+    k[28] = convert_hexa_2_bool("c6e00bf3");
+    k[29] = convert_hexa_2_bool("d5a79147");
+    k[30] = convert_hexa_2_bool("06ca6351");
+    k[31] = convert_hexa_2_bool("14292967");
+
+    k[32] = convert_hexa_2_bool("27b70a85");
+    k[33] = convert_hexa_2_bool("2e1b2138");
+    k[34] = convert_hexa_2_bool("4d2c6dfc");
+    k[35] = convert_hexa_2_bool("53380d13");
+    k[36] = convert_hexa_2_bool("650a7354");
+    k[37] = convert_hexa_2_bool("766a0abb");
+    k[38] = convert_hexa_2_bool("81c2c92e");
+    k[39] = convert_hexa_2_bool("92722c85");
+    k[40] = convert_hexa_2_bool("a2bfe8a1");
+    k[41] = convert_hexa_2_bool("a81a664b");
+    k[42] = convert_hexa_2_bool("c24b8b70");
+    k[43] = convert_hexa_2_bool("c76c51a3");
+    k[44] = convert_hexa_2_bool("d192e819");
+    k[45] = convert_hexa_2_bool("d6990624");
+    k[46] = convert_hexa_2_bool("f40e3585");
+    k[47] = convert_hexa_2_bool("106aa070");
+
+    k[48] = convert_hexa_2_bool("19a4c116");
+    k[49] = convert_hexa_2_bool("1e376c08");
+    k[50] = convert_hexa_2_bool("2748774c");
+    k[51] = convert_hexa_2_bool("34b0bcb5");
+    k[52] = convert_hexa_2_bool("391c0cb3");
+    k[53] = convert_hexa_2_bool("4ed8aa4a");
+    k[54] = convert_hexa_2_bool("5b9cca4f");
+    k[55] = convert_hexa_2_bool("682e6ff3");
+    k[56] = convert_hexa_2_bool("748f82ee");
+    k[57] = convert_hexa_2_bool("78a5636f");
+    k[58] = convert_hexa_2_bool("84c87814");
+    k[59] = convert_hexa_2_bool("8cc70208");
+    k[60] = convert_hexa_2_bool("90befffa");
+    k[61] = convert_hexa_2_bool("a4506ceb");
+    k[62] = convert_hexa_2_bool("be49a3f7");
+    k[63] = convert_hexa_2_bool("c67178f2");
+
+    return k[i];
+
+}
+
+bool* padding(bool *msg, int l){
+    // l + 1 + (0...0) = SIZE_OF_BLOCK*k + (SIZE_OF_BLOCK - SIZE_OF_ADDRESS)
+    int num_of_zeros;
     int k;
-    if((l+1)%512 <= 448)
+    const int last_block_size = SIZE_OF_BLOCK - SIZE_OF_ADDRESS; //448
+    if((l+1)%SIZE_OF_BLOCK <= last_block_size)
     {
-        numOf0 = (l+1)%512 - 448;
-        k = (l+1)/512;
+        num_of_zeros = (l+1)%SIZE_OF_BLOCK - last_block_size;
+        k = (l+1)/SIZE_OF_BLOCK;
     }
     else
     {
-        numOf0 = (512-(l+1)%512) + 448;
-        k = (l+1)/512 + 1;
+        num_of_zeros = (SIZE_OF_BLOCK-(l+1)%SIZE_OF_BLOCK) + last_block_size;
+        k = (l+1)/SIZE_OF_BLOCK + 1;
     }
-    bool paddedMsg[l + 1 + numOf0];
-    for(int i = 0; i < l; i ++) paddedMsg[i] = msg[i];
-    paddedMsg[l] = 1;
-    for(int i = 0; i < numOf0; i++){
-        paddedMsg[l+1+i] = 0;
+    bool* padded_msg = new bool [l + 1 + num_of_zeros];
+    for(int i = 0; i < l; i ++) padded_msg[i] = msg[i];
+    padded_msg[l] = 1;
+    for(int i = 0; i < num_of_zeros; i++){
+        padded_msg[l+1+i] = 0;
     }
 
-    return paddedMsg;
+    return padded_msg;
 }
 
 void printSth(bool** data,int n,int m){
@@ -57,4 +152,40 @@ bool** parsing(bool* data,int data_size){
         blocks[(int)(i/SIZE_OF_BLOCK)][i%SIZE_OF_BLOCK] = data[i];
     }
     printSth(blocks,2,2);
+    return blocks;
 }
+
+bool* /*32*/ convert_hexa_2_bool(string hex){
+    bool* ret = new bool [32];
+    for(int i = 0; i < 8; i++){
+        array<bool, 4> dig = convert_hexa_digit__2_bool(hex[i]);
+        for(int j = 0; j < 4; j++)
+        {
+            ret[i*4+j] = dig[j];
+        }
+    }
+    return &ret[0];
+}
+
+array<bool, 4> convert_hexa_digit__2_bool(char hex){
+    switch (hex){
+        case '0': return {0,0,0,0};
+        case '1': return {0,0,0,1};
+        case '2': return {0,0,1,0};
+        case '3': return {0,0,1,1};
+        case '4': return {0,1,0,0};
+        case '5': return {0,1,0,1};
+        case '6': return {0,1,1,0};
+        case '7': return {0,1,1,1};
+        case '8': return {1,0,0,0};
+        case '9': return {1,0,0,1};
+        case 'a': return {1,0,1,0};
+        case 'b': return {1,0,1,1};
+        case 'c': return {1,1,0,0};
+        case 'd': return {1,1,0,1};
+        case 'e': return {1,1,1,0};
+        case 'f': return {1,1,1,1};
+        default:  return {0,0,0,0};
+    }
+}
+
