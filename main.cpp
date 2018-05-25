@@ -33,4 +33,5 @@ bool** parsing(bool* data,int data_size){
         blocks[(int)(i/SIZE_OF_BLOCK)][i%SIZE_OF_BLOCK] = data[i];
     }
     printSth(blocks,2,2);
+    return blocks;
 }
