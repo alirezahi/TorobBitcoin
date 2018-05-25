@@ -157,3 +157,15 @@ bool** parsing_w(bool* data,int data_size){
 
 }
 
+bool** permutation(bool** data){
+    bool** permutation_data = new bool*[64];
+    for(int i = 0; i < 64; i++){
+        permutation_data = new bool[32];
+        for(int j = 0; j < 32; j++){
+            int current_block = 3-(j/8);
+            permutation_data[i][current_block*8 + (7-j%8)] = data[i][j];
+        }
+    }
+    return permutation_data;
+}
+
