@@ -26,29 +26,13 @@ bool* not_array(const bool*,int);
 bool* assign_array(bool* bool_array, const bool* assigner_array, int size);
 
 
-void f (bool* a){
-
-    bool* b = new bool[2];
-    b[0] = 1; b[1] = 0;
-    a = b;
-}
-
 int main() {
-    /*bool msg[] = {0, 1, 0, 1};
-    bool *f1 = padding(msg, sizeof(msg) / sizeof(bool));
-    cout << f1;*/
 
-    /*bool* a = new bool[1]{0};
-    cout << a[0] << endl;
-    cout << a[0] << endl;*/ // it's ok
+    bool* b = new bool[4]{1,0,1,0};
+    bool* c = new bool[4]{0,1,1,0};
+    bool* r = add_array(b,c,4);
+    for(int i = 3; i >=0; i--) cout << r[i];
 
-    bool* b = new bool[2];
-    b[0] = 1; b[1] = 1;
-    cout << b[1] << endl;
-    f(b);
-    bool* b2 = new bool[2]; b2[0]=1; b2[1]=0;
-    assign_array(b,b2,2);
-    cout << b[1];
     return 0;
 }
 
