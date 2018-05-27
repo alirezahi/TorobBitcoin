@@ -25,8 +25,6 @@ bool* twos_comp_array(const bool*,int);
 bool* not_array(const bool*,int);
 bool* assign_array(bool* bool_array, const bool* assigner_array, int size);
 
-bool* sum_array(bool* ,bool* , int );
-
 
 void f (bool* a){
 
@@ -38,7 +36,7 @@ void f (bool* a){
 int main() {
     bool msg[] = {1, 1, 0, 1};
     bool msg1[] = {0, 1, 1, 0};
-    bool *f1 = sum_array(msg,msg1,4);
+    bool *f1 = add_array(msg,msg1,4);
     for(int i=0;i<4;i++){
         cout << f1[i];
     }
@@ -49,11 +47,11 @@ int main() {
 
     bool* b = new bool[2];
     b[0] = 1; b[1] = 1;
-    cout << b[1] << endl;
+//    cout << b[1] << endl;
     f(b);
     bool* b2 = new bool[2]; b2[0]=1; b2[1]=0;
     assign_array(b,b2,2);
-    cout << b[1];
+//    cout << b[1];
     return 0;
 }
 
@@ -119,7 +117,7 @@ void innerCompression(bool* a, bool* b, bool* c, bool* d, bool* e, bool* f, bool
 
 bool* /*32*/ getK(int i){
     bool ** k = new bool* [64];
-    k[0] = convert_hexa_2_bool("428a298"); //??
+    k[0] = convert_hexa_2_bool("428a2f98");
     k[1] = convert_hexa_2_bool("71374491");
     k[2] = convert_hexa_2_bool("b5c0fbcf");
     k[3] = convert_hexa_2_bool("e9b5dba5");
@@ -388,13 +386,13 @@ bool** parsing_w(bool* data,int data_size){
         w_blocks[i/32][i%32] = data[i];
     }
     for(int i=16; i < 64; i++){
-        w_blocks[i] = sum_array(
-                sum_array(
+        w_blocks[i] = add_array(
+                add_array(
                         sigma_one(w_blocks[i-1],32),
                         w_blocks[i-6],
                         32
                 ),
-                sum_array(
+                add_array(
                         sigma_zero(w_blocks[i-12],32),
                         w_blocks[i-15],
                         32
