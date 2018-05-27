@@ -18,11 +18,16 @@ bool* rot(bool*,int);
 bool* shf(bool*,int);
 bool* xor_array(bool*,bool*,int);
 
+bool* sum_array(bool* ,bool* , int );
+
 
 int main() {
-    /*bool msg[] = {0, 1, 0, 1};
-    bool *f1 = padding(msg, sizeof(msg) / sizeof(bool));
-    cout << f1;*/
+    bool msg[] = {1, 1, 0, 1};
+    bool msg1[] = {0, 1, 1, 0};
+    bool *f1 = sum_array(msg,msg1,4);
+    for(int i=0;i<4;i++){
+        cout << f1[i];
+    }
 
     /*bool* a = new bool[1]{0};
     cout << a[0] << endl;
@@ -202,20 +207,6 @@ bool* sigma(bool* data,int size,int first_rot_loop,int second_rot_loop,int shf_l
     return xor_array(xor_array(rot_first_result,rot_second_result,size),shf_result,size);
 }
 
-bool* sum_array(bool* first_bool_array,bool* second_bool_array, int size){
-    bool* sum_data = new bool[size];
-    bool* carry_array = new bool[size+1];
-    for(int i = 0; i < size; i++){
-        carry_array[i] = 0;
-    }
-    for(int i = 0; i < size; i++){
-        sum_data[i] = first_bool_array[i]+second_bool_array[i]+carry_array[i];
-        if(first_bool_array[i] == 1 && second_bool_array[i] == 1){
-            carry_array[i+1] = 1;
-        }
-    }
-    return sum_data;
-}
 
 bool* sigma_zero(bool* data,int size){
     return sigma(data,size,17,14,12);
