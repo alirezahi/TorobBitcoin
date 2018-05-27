@@ -4,9 +4,9 @@
 using namespace std;
 
 bool* padding(bool *msg, int l);
-array<bool, 4> convert_hexa_digit__2_bool(char hex);
-bool* convert_hexa_2_bool(string hex);
-void innerCompression(bool* a);
+array<bool, 4> convert_hexa_digit__2_bool(char);
+bool* convert_hexa_2_bool(string);
+void innerCompression(bool* a, bool* b, bool* c, bool* d, bool* e, bool* f, bool* g, bool* h, const bool* kt, const bool* wt);
 
 const int SIZE_OF_BLOCK = 2;
 const int SIZE_OF_ADDRESS = 1;
@@ -16,10 +16,24 @@ void printSth(bool**);
 
 bool* rot(bool*,int);
 bool* shf(bool*,int);
-bool* xor_array(bool*,bool*,int);
+bool* rot_n(bool *, int, int);
+bool* shf_n(bool *, int, int);
+bool* xor_array(const bool*,const bool*,int);
+bool* and_array(const bool*,const bool*, int);
+bool* add_array(const bool*,const bool*, int);
+bool* twos_comp_array(const bool*,int);
+bool* not_array(const bool*,int);
+bool* assign_array(bool* bool_array, const bool* assigner_array, int size);
 
 bool* sum_array(bool* ,bool* , int );
 
+
+void f (bool* a){
+
+    bool* b = new bool[2];
+    b[0] = 1; b[1] = 0;
+    a = b;
+}
 
 int main() {
     bool msg[] = {1, 1, 0, 1};
@@ -31,16 +45,76 @@ int main() {
 
     /*bool* a = new bool[1]{0};
     cout << a[0] << endl;
-    innerCompression(a);
     cout << a[0] << endl;*/ // it's ok
 
+    bool* b = new bool[2];
+    b[0] = 1; b[1] = 1;
+    cout << b[1] << endl;
+    f(b);
+    bool* b2 = new bool[2]; b2[0]=1; b2[1]=0;
+    assign_array(b,b2,2);
+    cout << b[1];
     return 0;
 }
 
 
-void innerCompression(bool* a, bool* b, bool* c, bool* d, bool* e, bool* f, bool* g, bool* h){
-    bool* t1 = new bool [32];
-    bool* t2 = new bool [32];
+
+
+void innerCompression(bool* a, bool* b, bool* c, bool* d, bool* e, bool* f, bool* g, bool* h, const bool* kt, const bool* wt){
+    bool* sigma1E = xor_array(xor_array(rot_n(e, 32, 6), rot_n(e, 32, 11), 32), rot_n(e, 32, 25), 32);
+    bool* chEFG = xor_array(
+                and_array(e, f, 32),
+                xor_array( and_array(not_array(f, 32), g, 32)
+                         , and_array(not_array(e, 32), g, 32)
+                         , 32
+                         )
+                , 32
+    );
+    bool* t2 = add_array(
+            h,
+            add_array(
+                    sigma1E,
+                    add_array(
+                            chEFG,
+                            add_array(kt,wt,32),
+                            32
+                    ),
+                    32
+            ),
+            32
+    );
+
+    bool* sigma0A = xor_array(xor_array(xor_array(rot_n(a, 32, 2), rot_n(a, 32, 13), 32), rot_n(a, 32, 22), 32),
+                              shf_n(a, 32, 7), 32);
+    bool* majABC = xor_array(
+            and_array(a, c, 32),
+            xor_array( and_array(a, b, 32)
+                    , and_array(b, c, 32)
+                    , 32
+            )
+            , 32
+    );
+    bool* cPlusD = add_array(c, d, 32);
+    bool* sigma2CplusD = xor_array(xor_array(xor_array(rot_n(cPlusD, 32, 2), rot_n(cPlusD, 32, 3), 32),
+                                             rot_n(cPlusD, 32, 15), 32),
+                                   shf_n(cPlusD, 32, 5), 32);
+    bool* t1 = add_array(
+            sigma0A,
+            add_array(
+                    majABC,
+                    sigma2CplusD,
+                    32
+            ),
+            32
+    );
+    assign_array(h, g, 32);
+    assign_array(f, e, 32);
+    assign_array(d, c, 32);
+    assign_array(b, a, 32);
+    assign_array(g, f, 32);
+    assign_array(e, add_array(d, t1, 32), 32);
+    assign_array(c, b, 32);
+    assign_array(a, add_array(t1, add_array(t1, add_array(t1, twos_comp_array(t2, 32), 32), 32), 32), 32);
 }
 
 bool* /*32*/ getK(int i){
@@ -162,7 +236,23 @@ bool** parsing(bool* data,int data_size){
     }
     printSth(blocks,2,2);
     return blocks;
-    return blocks;
+}
+
+bool* rot_n(bool *data, int size, int n){
+    bool* rot_res=data;
+    for(int i = 0;i < n; i++){
+        rot_res = rot(rot_res,size);
+    }
+    return rot_res;
+}
+
+bool* shf_n(bool *data, int size, int n){
+    bool* shf_res=data;
+    for(int i = 0;i < n; i++){
+        shf_res = shf(shf_res,size);
+    }
+
+    return shf_res;
 }
 
 bool* rot(bool* data,int size){
@@ -183,12 +273,50 @@ bool* shf(bool* data,int size){
     return shf_data;
 }
 
-bool* xor_array(bool* first_bool_array,bool* second_bool_array, int size){
+bool* xor_array(const bool* first_bool_array,const bool* second_bool_array, int size){
     bool* xor_data = new bool[size];
     for(int i = 0; i < size; i++){
-        xor_data[i] = first_bool_array[i]^second_bool_array[i];
+        xor_data[i] = first_bool_array[i]!=second_bool_array[i];
     }
     return xor_data;
+}
+
+bool* and_array(const bool* first_bool_array,const bool* second_bool_array, int size){
+    bool* xor_data = new bool[size];
+    for(int i = 0; i < size; i++){
+        xor_data[i] = first_bool_array[i]&&second_bool_array[i];
+    }
+    return xor_data;
+}
+
+bool* add_array(const bool* first_bool_array,const bool* second_bool_array, int size){
+    bool* add_data = new bool[size];
+    bool c = 0;
+    for(int i = 0; i < size; i++){
+        add_data[i] = first_bool_array[i]!=second_bool_array[i]!=c;
+        c = (first_bool_array[i] && second_bool_array[i]) || (first_bool_array[i]&&c) || (c&&second_bool_array[i]);
+    }
+    return add_data;
+}
+
+bool* not_array(const bool* bool_array, int size){
+    bool* not_data = new bool[size];
+    for(int i = 0; i < size; i++){
+        not_data[i] = !bool_array[i];
+    }
+    return not_data;
+}
+
+bool* twos_comp_array(const bool* bool_array, int size){
+    bool* one = new bool[size];
+    for(int i = 1; i < size; i++) one[i] = 0;
+    one[0] = 1;
+    return add_array(not_array(bool_array, size), one, size);
+}
+
+bool* assign_array(bool* bool_array, const bool* assigner_array, int size){
+    for(int i = 0; i < size; i++) bool_array[i] = assigner_array[i];
+    return bool_array;
 }
 
 bool* sigma(bool* data,int size,int first_rot_loop,int second_rot_loop,int shf_loop){
