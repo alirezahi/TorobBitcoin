@@ -36,9 +36,13 @@ void f (bool* a){
 int main() {
     bool msg[] = {1, 1, 0, 1};
     bool msg1[] = {0, 1, 1, 0};
-    bool *f1 = add_array(msg,msg1,4);
-    for(int i=0;i<4;i++){
+    bool *f1 = rot(msg,4);
+    for(int i=0; i<4 ;i++){
         cout << f1[i];
+    }
+    bool *f2 = shf(msg,4);
+    for(int i=0; i<4 ;i++){
+        cout << f2[i];
     }
 
     /*bool* a = new bool[1]{0};
@@ -255,9 +259,9 @@ bool* shf_n(bool *data, int size, int n){
 
 bool* rot(bool* data,int size){
     bool * rot_data = new bool[size];
-    rot_data[0]=data[size-1];
+    rot_data[size-1]=data[0];
     for(int i = 1;i < size;i++){
-        rot_data[i] = data[i-1];
+        rot_data[i-1] = data[i];
     }
     return rot_data;
 }
@@ -265,9 +269,9 @@ bool* rot(bool* data,int size){
 bool* shf(bool* data,int size){
     bool * shf_data = new bool[size];
     for(int i = 1;i < size;i++){
-        shf_data[i] = data[i-1];
+        shf_data[i-1] = data[i];
     }
-    shf_data[0]=0;
+    shf_data[size-1]=0;
     return shf_data;
 }
 
