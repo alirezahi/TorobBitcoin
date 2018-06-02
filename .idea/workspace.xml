@@ -32,8 +32,8 @@
       <file leaf-file-name="main.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="181">
-              <caret line="291" column="6" selection-start-line="291" selection-start-column="6" selection-end-line="291" selection-end-column="6" />
+            <state relative-caret-position="263">
+              <caret line="58" column="12" lean-forward="true" selection-start-line="57" selection-start-column="12" selection-end-line="58" selection-end-column="12" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -62,6 +62,9 @@
       <find>and</find>
       <find>shfN</find>
       <find>32</find>
+      <find>assi</find>
+      <find>innerC</find>
+      <find>assign_array</find>
     </findStrings>
     <replaceStrings>
       <replace>--</replace>
@@ -89,9 +92,9 @@
     <packageJsonPaths />
   </component>
   <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds">
     <option name="y" value="23" />
-    <option name="width" value="840" />
+    <option name="width" value="1680" />
     <option name="height" value="977" />
   </component>
   <component name="ProjectView">
@@ -150,15 +153,16 @@
       <workItem from="1527322101500" duration="447000" />
       <workItem from="1527324696212" duration="1096000" />
       <workItem from="1527335244726" duration="8601000" />
-      <workItem from="1527411010504" duration="566000" />
+      <workItem from="1527411010504" duration="3120000" />
+      <workItem from="1527415575915" duration="911000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="25717000" />
+    <option name="totallyTimeSpent" value="29182000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1680" height="977" extended-state="6" />
+    <frame x="0" y="23" width="1680" height="977" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.32023808" />
@@ -167,12 +171,12 @@
       <window_info anchor="bottom" id="CMake" order="7" />
       <window_info anchor="right" id="LuaJ" order="3" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.3145072" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3145072" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.32779622" />
-      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -189,6 +193,23 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1020">
+          <caret line="68" column="13" lean-forward="true" selection-start-line="68" selection-start-column="13" selection-end-line="68" selection-end-column="13" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="18" selection-start-line="2" selection-start-column="18" selection-end-line="2" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/main.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1020">
@@ -266,8 +287,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="181">
-          <caret line="291" column="6" selection-start-line="291" selection-start-column="6" selection-end-line="291" selection-end-column="6" />
+        <state relative-caret-position="263">
+          <caret line="58" column="12" lean-forward="true" selection-start-line="57" selection-start-column="12" selection-end-line="58" selection-end-column="12" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>
