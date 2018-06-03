@@ -35,13 +35,16 @@ bool* not_array(const bool*,int);
 bool* assign_array(bool* bool_array, const bool* assigner_array, int size);
 
 int main() {
-    bool msg[] = {1,1,0,0,1,0,0,1,1,1,0,1,1,1,0,0,0,1,1,0,1,1,0,1,1,1,1,0,1,1,1,0,1,1,1,0,1,0,1,1,0,1,1,0,1,1,0,1,0,1,1,1,1,1,1,0,1,1,1,0,0,0,1,0,0,0,0,1,1,0,0,1,0,0,1,0,1,0,0,0,0,0,0,1,1,0,1,0,1,1,1,0,1,0,0,1,1,1,1,1,0,0,1,1,0,0,0,1,1,0,1,1,1,1,1,1,1,0,1,1,0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,0,0,0,1,1,0,0,0,0,0,1,0,0,0,0,1,1,0,0,1,0,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,0,0,1,0,1,0,0,0,0,1,0,1,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,0,0,1,0,0,0,1,0,1,1,1,0,1,1,1,0,0,1,0,0,1,0,0,1,1,1,1,1,0,1,1,1,1,1,1,0,1,0,1,0,1,1,1,0,1,1,0,1,0,0,0,1,1,0,0,0,1,0,1,1,1,0,0,0,0,1,1,1,0,1,1,1,0,1,1,0,1,1,1,0,1,1,1,1,0,1,0,1,1,0,0,0,1,1,1,0,0,1,0,1,0,1,0,0,1,0,1,0,1,0,0,1,1,1,1,1,1,1,1,0,0,1,0,1,1,1,0,1,1,0,1,1,0,1,0,0,1,1,1,0,1,1,0,0,0,1,0,1,1,0,0,1,1,0,1,1,0,1,0,1,1,1,1,1,0,1,1,0,1,0,1,0,0,0,1,0,1,1,1,1,0,1,0,0,1,0,1,0,0,0,1,1,0,1,1,1,1,1,1,1,1,0,1,0,1,0,0,1,1,1,0,0,1,0,0,0,1,0,1,0,0,1,1,1,1,1,1,0,0,0,1,1,0,0,0,1,0,0,0,0,0,1,0,1,1,0,0,1,0,0,1,1,0,0,1,1,1,1,0,0,0,0,0,1,0,1,0,1,1,1,0,0,0,0,0,1,0,0,1,1,0,1,1,1,1,0,1,1,0,1,0,1,1,1,1,1,1,1};
+    bool msg[] = {0,1,1,0,1,0,0,0,0,1,1,0,0,1,0,1,0,1,1,0,1,1,0,0,0,1,1,0,1,1,0,0,0,1,1,0,1,1,1,1};
     int LENGTH_MESSAGE = sizeof(msg)/ sizeof(bool);
     bool* padding_msg = padding(msg,LENGTH_MESSAGE);
     LENGTH_MESSAGE = size_of_msg(LENGTH_MESSAGE);
     int NUMBER_OF_BLOCKS = LENGTH_MESSAGE/512;
-    bool** blocks = parsing(msg,LENGTH_MESSAGE);
+    bool** blocks = parsing(padding_msg,LENGTH_MESSAGE);
     bool* hash = computation(blocks,NUMBER_OF_BLOCKS);
+    for(int i=0;i<30;i++){
+        cout << hash[i] ;
+    }
     return 0;
 }
 
@@ -481,5 +484,25 @@ bool** permutation(bool** data){
 }
 
 bool* block_header(bool* version,bool* hasPrevBlock, bool* hasMerkelRoot,bool* time,bool* difficulty,bool* nounce){
-    
+    bool* result = new bool[640];
+    for(int i=0;i<4;i++){
+        result[i] = version[i];
+    }
+    for(int i=0;i<32*8;i++){
+        result[i+4] = hasPrevBlock[i];
+    }
+    for(int i=0;i<32*8;i++){
+        result[i+4+32*8] = hasMerkelRoot[i];
+    }
+    for(int i=0;i<4;i++){
+        result[i+4+32*8*2] = time[i];
+    }
+    for(int i=0;i<4;i++){
+        result[i+4*2+32*8*2] = difficulty[i];
+    }
+    for(int i=0;i<4;i++){
+        result[i+4*3+32*8*2] = nounce[i];
+    }
+    return result;
 }
+
