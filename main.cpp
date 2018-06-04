@@ -31,14 +31,49 @@ bool* not_array(const bool*,int);
 bool* assign_array(bool* bool_array, const bool* assigner_array, int size, bool initial);
 bool** initK();
 bool* SHA256(bool* msg, int msg_length);
+bool* encrypt(bool* msg, int msg_length);
+bool isBigger(const bool* first, const bool* second, int size);
 
 int main() {
     string msgStr = "abcd";
+    cout << "message: " << msgStr << endl;
     bool* msg = convert_hexa_2_bool(msgStr);
+
     bool* hash = SHA256(msg, (int)msgStr.length()*4);
-    string hashStr = convert_binary_to_hex(hash, 256);
-    cout << hashStr;
+    cout << "SHA256: " << convert_binary_to_hex(hash, 256) << endl;
+
+    hash = encrypt(msg, (int)msgStr.length()*4);
+    cout << "result:" << endl << convert_binary_to_hex(hash, 256);
     return 0;
+}
+
+bool* encrypt(bool* msg, int msg_length){
+    const string version = "02000000";
+    const string prev_block = "17975b97c18ed1f7e255adf297599b55330edab87803c8170100000000000000";
+    string markel_root = convert_binary_to_hex(SHA256(msg, msg_length), 256);
+    const string timestamp = "358b0553";
+    const string diff = "5350f119";
+    string block_header_base = version + prev_block + markel_root + timestamp + diff;
+
+    const bool* target = convert_hexa_2_bool("00000000000002816E0000000000000000000000000000000000000000000000");
+
+    bool* ONE = new bool[32];
+    for(int i = 1; i < 32; i++) ONE[i] = 0;
+    ONE[0] = 1;
+    
+    bool* nonce = new bool[32];
+    for(int i = 0; i < 32; i++) nonce[i] = 0;
+
+    bool* hash;
+
+    do {
+        string block_header = block_header_base + convert_binary_to_hex(nonce, 32);
+        hash = SHA256(SHA256(convert_hexa_2_bool(block_header), block_header.length()*4), 256);
+        nonce = add_array(nonce, ONE, 32);
+    }
+    while(isBigger(hash, target, 256));
+
+    return hash;
 }
 
 bool* SHA256(bool* msg, int msg_length){
@@ -48,6 +83,14 @@ bool* SHA256(bool* msg, int msg_length){
     bool** blocks = parsing(padding_msg,msg_length);
     //blocks = permutation(blocks); ?? todo
     return computation(blocks,NUMBER_OF_BLOCKS);
+}
+
+bool isBigger(const bool* first, const bool* second, int size){
+    for(int i = size-1; i >= 0; i--){
+        if(first[i] == second[i]) continue;
+        return first[i] > second[i];
+    }
+    return false;
 }
 
 bool** initial_hash(){
@@ -377,10 +420,10 @@ bool* not_array(const bool* bool_array, int size){
 }
 
 bool* twos_comp_array(const bool* bool_array, int size){
-    bool* one = new bool[size];
-    for(int i = 1; i < size; i++) one[i] = 0;
-    one[0] = 1;
-    return add_array(not_array(bool_array, size), one, size);
+    bool* ONE = new bool[size];
+    for(int i = 1; i < size; i++) ONE[i] = 0;
+    ONE[0] = 1;
+    return add_array(not_array(bool_array, size), ONE, size);
 }
 
 bool* assign_array(bool* bool_array, const bool* assigner_array, int size, bool initial){
@@ -410,7 +453,7 @@ bool* sigma_zero(bool* data,int size){
     return sigma(data,size,17,14,12);
 }
 
-bool* sigma_one(bool* data,int size){
+bool* sigma_ONE(bool* data,int size){
     return sigma(data,size,9,19,9);
 }
 /**
@@ -419,8 +462,9 @@ bool* sigma_one(bool* data,int size){
  * @return 32bit
  */
 bool* convert_hexa_2_bool(string hex){
-    bool* ret = new bool [32];
-    for(int i = 0; i < 8; i++){
+    int hexLength = hex.length();
+    bool* ret = new bool [hexLength*4];
+    for(int i = 0; i < hexLength; i++){
         array<bool, 4> dig = convert_hexa_digit__2_bool(hex[i]);
         for(int j = 0; j < 4; j++)
         {
@@ -490,7 +534,7 @@ bool** parsing_w(bool* data,int data_size){
     for(int i=16; i < 64; i++){
         w_blocks[i] = add_array(
                 add_array(
-                        sigma_one(w_blocks[i-1],32),
+                        sigma_ONE(w_blocks[i-1],32),
                         w_blocks[i-6],
                         32
                 ),
@@ -516,27 +560,3 @@ bool** permutation(bool** data){ //todo
     }
     return permutation_data;
 }
-
-bool* block_header(bool* version,bool* hasPrevBlock, bool* hasMerkelRoot,bool* time,bool* difficulty,bool* nounce){
-    bool* result = new bool[640];
-    for(int i=0;i<4;i++){
-        result[i] = version[i];
-    }
-    for(int i=0;i<32*8;i++){
-        result[i+4] = hasPrevBlock[i];
-    }
-    for(int i=0;i<32*8;i++){
-        result[i+4+32*8] = hasMerkelRoot[i];
-    }
-    for(int i=0;i<4;i++){
-        result[i+4+32*8*2] = time[i];
-    }
-    for(int i=0;i<4;i++){
-        result[i+4*2+32*8*2] = difficulty[i];
-    }
-    for(int i=0;i<4;i++){
-        result[i+4*3+32*8*2] = nounce[i];
-    }
-    return result;
-}
-
