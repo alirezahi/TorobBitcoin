@@ -12,7 +12,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0c4c3f4e-cb4c-4b78-a477-71d4591b1cb1" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
@@ -32,8 +31,8 @@
       <file leaf-file-name="main.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="427">
-              <caret line="41" column="38" selection-start-line="41" selection-start-column="38" selection-end-line="41" selection-end-column="38" />
+            <state relative-caret-position="287">
+              <caret line="35" column="25" selection-start-line="35" selection-start-column="25" selection-end-line="35" selection-end-column="25" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -72,13 +71,13 @@
       <find>inner_compression</find>
       <find>printSth</find>
       <find>convert_hexa_digit__2_bool</find>
-      <find>convert_hexa_2_bool</find>
       <find>cout</find>
-      <find>convert_binary_to_hex</find>
       <find>parsing_w</find>
       <find>parsing</find>
       <find>permutation</find>
       <find>permu</find>
+      <find>convert_binary_to_hex</find>
+      <find>convert_hexa_2_bool</find>
     </findStrings>
     <replaceStrings>
       <replace>--</replace>
@@ -169,12 +168,12 @@
       <workItem from="1527335244726" duration="8601000" />
       <workItem from="1527411010504" duration="3120000" />
       <workItem from="1527415575915" duration="911000" />
-      <workItem from="1527933375912" duration="7329000" />
+      <workItem from="1527933375912" duration="9165000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="36511000" />
+    <option name="totallyTimeSpent" value="38347000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1680" height="977" extended-state="0" />
@@ -319,8 +318,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="427">
-          <caret line="41" column="38" selection-start-line="41" selection-start-column="38" selection-end-line="41" selection-end-column="38" />
+        <state relative-caret-position="287">
+          <caret line="35" column="25" selection-start-line="35" selection-start-column="25" selection-end-line="35" selection-end-column="25" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>

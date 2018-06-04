@@ -16,7 +16,7 @@ bool** parsing_w(bool*,int);
 bool** permutation(bool** data);
 bool* computation(bool** blocks,int number_of_blocks);
 void printSth(bool**);
-char convert_binary_to_hex(bool* data, int start);
+string convert_binary_to_hex(bool* data, int length);
 bool** initial_hash();
 int size_of_msg(int length);
 bool* rot(bool*,int);
@@ -30,22 +30,24 @@ bool* twos_comp_array(const bool*,int);
 bool* not_array(const bool*,int);
 bool* assign_array(bool* bool_array, const bool* assigner_array, int size, bool initial);
 bool** initK();
-
+bool* SHA256(bool* msg, int msg_length);
 
 int main() {
-    bool msg[] = {0,1,1,0,1,0,0,0,0,1,1,0,0,1,0,1,0,1,1,0,1,1,0,0,0,1,1,0,1,1,0,0,0,1,1,0,1,1,1,1};
-    int LENGTH_MESSAGE = sizeof(msg)/ sizeof(bool);
-    bool* padding_msg = padding(msg,LENGTH_MESSAGE);
-    LENGTH_MESSAGE = size_of_msg(LENGTH_MESSAGE);
-    int NUMBER_OF_BLOCKS = LENGTH_MESSAGE/512;
-    bool** blocks = parsing(padding_msg,LENGTH_MESSAGE);
-    //blocks = permutation(blocks); ??
-    bool* hash = computation(blocks,NUMBER_OF_BLOCKS);
-    for(int i=0;i<30;i++){
-        cout << hash[i] ;
-    }
-
+    string msgStr = "abcd";
+    bool* msg = convert_hexa_2_bool(msgStr);
+    bool* hash = SHA256(msg, (int)msgStr.length()*4);
+    string hashStr = convert_binary_to_hex(hash, 256);
+    cout << hashStr;
     return 0;
+}
+
+bool* SHA256(bool* msg, int msg_length){
+    bool* padding_msg = padding(msg,msg_length);
+    msg_length = size_of_msg(msg_length);
+    int NUMBER_OF_BLOCKS = msg_length/512 + 1; //todo? +1 ?
+    bool** blocks = parsing(padding_msg,msg_length);
+    //blocks = permutation(blocks); ?? todo
+    return computation(blocks,NUMBER_OF_BLOCKS);
 }
 
 bool** initial_hash(){
@@ -450,7 +452,7 @@ array<bool, 4> convert_hexa_digit__2_bool(char hex){
     }
 }
 
-char convert_binary_to_hex(bool* data, int start){
+char convert_binary_to_hex_digit(bool* data, int start){
     int val = 0;
     val = data[start] ? val+1 : val;
     val = data[start+1] ? val+2 : val;
@@ -463,6 +465,18 @@ char convert_binary_to_hex(bool* data, int start){
 
     return (char)(val - 10 + 'a');
 }
+
+string convert_binary_to_hex(bool* data, int length){
+    string h = "";
+    if(length%4 != 0){
+        cout << "Length error on convert to hex" << endl;
+    }
+    for(int i = 0; i < length; i=i+4){
+        h = h + convert_binary_to_hex_digit(data, i);
+    }
+    return h;
+}
+
 
 
 bool** parsing_w(bool* data,int data_size){
