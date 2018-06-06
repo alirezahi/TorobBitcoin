@@ -6,11 +6,16 @@ using namespace std;
 bool* padding(bool *msg, int l);
 array<bool, 4> convert_hexa_digit__2_bool(char);
 bool* convert_hexa_2_bool(string);
+array<bool, 8> convert_ascii_digit__2_bool(char ascii);
+bool* convert_ascii_2_bool(string ascii);
+int number_of_zeros_on_padding(int msg_length);
+int padded_msg_size(int msg_length);
+bool* convert_int_2_bool(int l);
 bool** inner_compression(bool* a, bool* b, bool* c, bool* d, bool* e, bool* f, bool* g, bool* h, const bool* kt, const bool* wt, const int size);
 bool** hash_computation(bool** w,bool** hash_part,bool** k);
 
-const int SIZE_OF_BLOCK = 2;
-const int SIZE_OF_ADDRESS = 1;
+const int SIZE_OF_BLOCK = 512;
+const int SIZE_OF_ADDRESS = 64;
 bool** parsing(bool*,int);
 bool** parsing_w(bool*,int);
 bool** permutation(bool** data);
@@ -18,7 +23,7 @@ bool* computation(bool** blocks,int number_of_blocks);
 void printSth(bool**);
 string convert_binary_to_hex(bool* data, int length);
 bool** initial_hash();
-int size_of_msg(int length);
+int number_of_blocks(int length);
 bool* rot(bool*,int);
 bool* shf(bool*,int);
 bool* rot_n(bool *, int, int);
@@ -37,13 +42,11 @@ bool isBigger(const bool* first, const bool* second, int size);
 int main() {
     string msgStr = "abcd";
     cout << "message: " << msgStr << endl;
-    bool* msg = convert_hexa_2_bool(msgStr);
-
-    bool* hash = SHA256(msg, (int)msgStr.length()*4);
+    bool* msg = convert_ascii_2_bool(msgStr);
+    bool *hash = SHA256(msg, (int) msgStr.length() * 8);
     cout << "SHA256: " << convert_binary_to_hex(hash, 256) << endl;
-
     hash = encrypt(msg, (int)msgStr.length()*4);
-    cout << "result:" << endl << convert_binary_to_hex(hash, 256);
+    cout << "result: " << convert_binary_to_hex(hash, 256);
     return 0;
 }
 
@@ -55,7 +58,7 @@ bool* encrypt(bool* msg, int msg_length){
     const string diff = "5350f119";
     string block_header_base = version + prev_block + markel_root + timestamp + diff;
 
-    const bool* target = convert_hexa_2_bool("00000000000002816E0000000000000000000000000000000000000000000000");
+    const bool* target = convert_hexa_2_bool("1010101010101010101010101010101010101010101010101010101010101010");
 
     bool* ONE = new bool[32];
     for(int i = 1; i < 32; i++) ONE[i] = 0;
@@ -72,14 +75,12 @@ bool* encrypt(bool* msg, int msg_length){
         nonce = add_array(nonce, ONE, 32);
     }
     while(isBigger(hash, target, 256));
-
     return hash;
 }
 
 bool* SHA256(bool* msg, int msg_length){
     bool* padding_msg = padding(msg,msg_length);
-    msg_length = size_of_msg(msg_length);
-    int NUMBER_OF_BLOCKS = msg_length/512;
+    int NUMBER_OF_BLOCKS = number_of_blocks(msg_length);
     bool** blocks = parsing(padding_msg,msg_length);
     return computation(blocks,NUMBER_OF_BLOCKS);
 }
@@ -106,7 +107,7 @@ bool** initial_hash(){
     return hash_part;
 }
 
-int size_of_msg(int length){
+int number_of_blocks(int length){
     if(length%512 <= 447)
         return length/512 + 1;
     return length/512 + 2;
@@ -305,28 +306,28 @@ bool** initK(){
 }
 
 bool* padding(bool *msg, int l){
-    // l + 1 + (0...0) = SIZE_OF_BLOCK*k + (SIZE_OF_BLOCK - SIZE_OF_ADDRESS)
-    int num_of_zeros;
-    int k;
-    const int last_block_size = SIZE_OF_BLOCK - SIZE_OF_ADDRESS; //448
-    if((l+1)%SIZE_OF_BLOCK <= last_block_size)
-    {
-        num_of_zeros = (l+1)%SIZE_OF_BLOCK - last_block_size;
-        k = (l+1)/SIZE_OF_BLOCK;
-    }
-    else
-    {
-        num_of_zeros = (SIZE_OF_BLOCK-(l+1)%SIZE_OF_BLOCK) + last_block_size;
-        k = (l+1)/SIZE_OF_BLOCK + 1;
-    }
+    // l + 1 + (0...0) = SIZE_OF_BLOCK * NUMBER_OF_BLOCKS + (SIZE_OF_BLOCK - SIZE_OF_ADDRESS)
+    int num_of_zeros = number_of_zeros_on_padding(l);
     bool* padded_msg = new bool [l + 1 + num_of_zeros];
     for(int i = 0; i < l; i ++) padded_msg[i] = msg[i];
     padded_msg[l] = 1;
     for(int i = 0; i < num_of_zeros; i++){
         padded_msg[l+1+i] = 0;
     }
-
     return padded_msg;
+}
+
+int number_of_zeros_on_padding(int msg_length){
+    const int last_block_size = SIZE_OF_BLOCK - SIZE_OF_ADDRESS; //448
+    if((msg_length+1)%SIZE_OF_BLOCK <= last_block_size)
+    {
+        return last_block_size - (msg_length+1)%SIZE_OF_BLOCK;
+    }
+    return (SIZE_OF_BLOCK-(msg_length+1)%SIZE_OF_BLOCK) + last_block_size;
+}
+
+int padded_msg_size(int msg_length){
+    return msg_length + 1 + number_of_zeros_on_padding(msg_length);
 }
 
 void printSth(bool** data,int n,int m){
@@ -338,8 +339,9 @@ void printSth(bool** data,int n,int m){
     }
 }
 
-bool** parsing(bool* data,int data_size){
-    int number_of_blocks = (int)(data_size/SIZE_OF_BLOCK);
+bool** parsing(bool* data,int msg_size){
+    int data_size = padded_msg_size(msg_size);
+    int number_of_blocks = (data_size%SIZE_OF_BLOCK ==0) ? (data_size/SIZE_OF_BLOCK) : (data_size/SIZE_OF_BLOCK+1);
     bool **blocks = new bool*[number_of_blocks];
     for(int i = 0; i < data_size ;i++){
         if(i % SIZE_OF_BLOCK == 0){
@@ -347,7 +349,25 @@ bool** parsing(bool* data,int data_size){
         }
         blocks[(int)(i/SIZE_OF_BLOCK)][i%SIZE_OF_BLOCK] = data[i];
     }
+    bool* msg_size_bool = convert_int_2_bool(msg_size);
+    int last_block_index = number_of_blocks - 1;
+    int first_address_index = SIZE_OF_BLOCK - SIZE_OF_ADDRESS;
+    for(int i = 0; i < SIZE_OF_ADDRESS; i++){
+        blocks[last_block_index][first_address_index + i] = msg_size_bool[i];
+    }
     return blocks;
+}
+
+bool* convert_int_2_bool(int l){
+    int i = 0;
+    bool* res = new bool[64];
+    for(int i = 0; i < 64; i++) res[i] = 0;
+    while(l != 0 && i < 64){
+        if(l % 2 == 1) res[i] = 1;
+        i++;
+        l /= 2;
+    }
+    return res;
 }
 
 bool* rot_n(bool *data, int size, int n){
@@ -496,6 +516,31 @@ array<bool, 4> convert_hexa_digit__2_bool(char hex){
     }
 }
 
+bool* convert_ascii_2_bool(string ascii){
+    int hexLength = ascii.length();
+    bool* ret = new bool [hexLength*8];
+    for(int i = 0; i < hexLength; i++){
+        array<bool, 8> dig = convert_ascii_digit__2_bool(ascii[i]);
+        for(int j = 0; j < 8; j++)
+        {
+            ret[i*8+j] = dig[j];
+        }
+    }
+    return &ret[0];
+}
+
+array<bool, 8> convert_ascii_digit__2_bool(char ascii){
+    int ascii_code = (int)ascii;
+    int i = 0;
+    array<bool, 8> res = {0,0,0,0,0,0,0,0};
+    while(ascii_code > 0){
+        if(ascii_code % 2 == 1) res[i] = 1;
+        i++;
+        ascii_code /= 2;
+    }
+    return res;
+}
+
 char convert_binary_to_hex_digit(bool* data, int start){
     int val = 0;
     val = data[start] ? val+1 : val;
@@ -520,7 +565,6 @@ string convert_binary_to_hex(bool* data, int length){
     }
     return h;
 }
-
 
 
 bool** parsing_w(bool* data,int data_size){

@@ -13,6 +13,7 @@
   <component name="ChangeListManager">
     <list default="true" id="0c4c3f4e-cb4c-4b78-a477-71d4591b1cb1" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -31,10 +32,11 @@
       <file leaf-file-name="main.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="623">
-              <caret line="81" column="59" lean-forward="true" selection-start-line="81" selection-start-column="59" selection-end-line="81" selection-end-column="59" />
+            <state relative-caret-position="260">
+              <caret line="46" column="29" selection-start-line="46" selection-start-column="29" selection-end-line="46" selection-end-column="29" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
+                <marker date="1528310106121" expanded="true" signature="12688:12777" ph="..." />
               </folding>
             </state>
           </provider>
@@ -53,41 +55,42 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>448</find>
-      <find>blocks</find>
-      <find>428a298</find>
-      <find>&quot;--&quot;</find>
-      <find>0000</find>
-      <find>and</find>
-      <find>shfN</find>
-      <find>32</find>
-      <find>assi</find>
-      <find>innerC</find>
-      <find>assign_array</find>
-      <find>twos</find>
-      <find>hash_computation</find>
       <find>getK</find>
       <find>getH</find>
       <find>inner_compression</find>
       <find>printSth</find>
       <find>convert_hexa_digit__2_bool</find>
-      <find>cout</find>
       <find>parsing_w</find>
-      <find>parsing</find>
       <find>permutation</find>
       <find>permu</find>
       <find>convert_binary_to_hex</find>
-      <find>sha256</find>
       <find>convert</find>
       <find>one</find>
       <find>main</find>
       <find>convert_hexa_2_bool</find>
       <find>todo</find>
+      <find>N BL</find>
+      <find>size_of_msg</find>
+      <find>targer</find>
+      <find>n block</find>
+      <find>padding msg</find>
+      <find>convert_ascii_2_bool</find>
+      <find>convert_ascii_digit__2_bool</find>
+      <find>p msg</find>
+      <find>&quot;a&quot;</find>
+      <find>padded_msg_s</find>
+      <find>padding</find>
+      <find>parsi</find>
+      <find>SHA256</find>
+      <find>parsing</find>
+      <find>sha256</find>
+      <find>cout</find>
     </findStrings>
     <replaceStrings>
       <replace>--</replace>
       <replace>&quot;0000&quot;</replace>
       <replace>ONE</replace>
+      <replace>number_of_blocks</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -121,6 +124,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -132,7 +136,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -150,7 +153,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.TorobBitcoin">
+  <component name="RunManager" selected="Application.Build All">
     <configuration name="Build All" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="TorobBitcoin" RUN_TARGET_NAME="TorobBitcoin" EXPLICIT_BUILD_TARGET_NAME="all" />
     <configuration name="TorobBitcoin" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="TorobBitcoin" TARGET_NAME="TorobBitcoin" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="TorobBitcoin" RUN_TARGET_NAME="TorobBitcoin" />
     <list>
@@ -175,25 +178,28 @@
       <workItem from="1527411010504" duration="3120000" />
       <workItem from="1527415575915" duration="911000" />
       <workItem from="1527933375912" duration="14897000" />
+      <workItem from="1528289085324" duration="11548000" />
+      <workItem from="1528307651902" duration="2268000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="44079000" />
+    <option name="totallyTimeSpent" value="57895000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1" y="23" width="1680" height="977" extended-state="6" />
+    <frame x="0" y="23" width="1680" height="977" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.32023808" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.32023808" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Messages" order="7" weight="0.32779622" />
       <window_info anchor="bottom" id="CMake" order="7" />
       <window_info anchor="right" id="LuaJ" order="3" weight="0.3297619" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.3145072" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.28792912" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="7" visible="true" weight="0.32779622" />
+      <window_info anchor="bottom" id="Terminal" order="7" weight="0.32779622" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -214,10 +220,47 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/main.cpp">
       <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1215">
+          <caret line="81" column="6" selection-start-line="81" selection-start-column="6" selection-end-line="81" selection-end-column="6" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+            <marker date="1528310106121" expanded="true" signature="12688:12777" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="18" selection-start-line="2" selection-start-column="18" selection-end-line="2" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1215">
+          <caret line="81" column="59" lean-forward="true" selection-start-line="81" selection-start-column="59" selection-end-line="81" selection-end-column="59" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+            <marker date="1528310106121" expanded="true" signature="12688:12777" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="18" selection-start-line="2" selection-start-column="18" selection-end-line="2" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="870">
           <caret line="58" column="12" lean-forward="true" selection-start-line="57" selection-start-column="12" selection-end-line="58" selection-end-column="12" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
+            <marker date="1528310106121" expanded="true" signature="12688:12777" ph="..." />
           </folding>
         </state>
       </provider>
@@ -235,6 +278,7 @@
           <caret line="68" column="13" lean-forward="true" selection-start-line="68" selection-start-column="13" selection-end-line="68" selection-end-column="13" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
+            <marker date="1528310106121" expanded="true" signature="12688:12777" ph="..." />
           </folding>
         </state>
       </provider>
@@ -252,6 +296,7 @@
           <caret line="68" column="14" lean-forward="true" selection-start-line="68" selection-start-column="14" selection-end-line="68" selection-end-column="14" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
+            <marker date="1528310106121" expanded="true" signature="12688:12777" ph="..." />
           </folding>
         </state>
       </provider>
@@ -269,6 +314,7 @@
           <caret line="25" lean-forward="true" selection-start-line="25" selection-end-line="25" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
+            <marker date="1528310106121" expanded="true" signature="12688:12777" ph="..." />
           </folding>
         </state>
       </provider>
@@ -286,6 +332,7 @@
           <caret line="294" column="40" lean-forward="true" selection-start-line="294" selection-start-column="40" selection-end-line="294" selection-end-column="40" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
+            <marker date="1528310106121" expanded="true" signature="12688:12777" ph="..." />
           </folding>
         </state>
       </provider>
@@ -303,6 +350,7 @@
           <caret line="47" column="43" lean-forward="true" selection-start-line="47" selection-start-column="43" selection-end-line="47" selection-end-column="43" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
+            <marker date="1528310106121" expanded="true" signature="12688:12777" ph="..." />
           </folding>
         </state>
       </provider>
@@ -323,10 +371,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="623">
-          <caret line="81" column="59" lean-forward="true" selection-start-line="81" selection-start-column="59" selection-end-line="81" selection-end-column="59" />
+        <state relative-caret-position="260">
+          <caret line="46" column="29" selection-start-line="46" selection-start-column="29" selection-end-line="46" selection-end-column="29" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
+            <marker date="1528310106121" expanded="true" signature="12688:12777" ph="..." />
           </folding>
         </state>
       </provider>
