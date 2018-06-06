@@ -79,9 +79,8 @@ bool* encrypt(bool* msg, int msg_length){
 bool* SHA256(bool* msg, int msg_length){
     bool* padding_msg = padding(msg,msg_length);
     msg_length = size_of_msg(msg_length);
-    int NUMBER_OF_BLOCKS = msg_length/512 + 1; //todo? +1 ?
+    int NUMBER_OF_BLOCKS = msg_length/512;
     bool** blocks = parsing(padding_msg,msg_length);
-    //blocks = permutation(blocks); ?? todo
     return computation(blocks,NUMBER_OF_BLOCKS);
 }
 
@@ -118,6 +117,7 @@ bool* computation(bool** blocks,int number_of_blocks){
     bool** hashes = initial_hash();
     for(int i=0;i<number_of_blocks;i++){
         bool** w = parsing_w(blocks[i],512);
+        w = permutation(w);
         hashes = hash_computation(w,hashes,k);
     }
     bool* hash_result = new bool[256];
@@ -549,13 +549,16 @@ bool** parsing_w(bool* data,int data_size){
     return w_blocks;
 }
 
-bool** permutation(bool** data){ //todo
+bool** permutation(bool** data){
     bool** permutation_data = new bool*[64];
     for(int i = 0; i < 64; i++){
         permutation_data[i] = new bool[32];
         for(int j = 0; j < 32; j++){
             int current_block = 3-(j/8);
-            permutation_data[i][current_block*8 + (7-j%8)] = data[i][j];
+            int current_station = (7-j%8);
+            if(j >= 16 && j <= 23)
+                current_station = j%8;
+            permutation_data[i][current_block*8 + current_station] = data[i][j];
         }
     }
     return permutation_data;
