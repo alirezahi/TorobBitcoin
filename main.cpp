@@ -1,12 +1,19 @@
+//#include "platform.h"
+//#include "xil_types.h"
+//#include "xstatus.h"
+//#include "xil_io.h"
+//#define BASE 0x44A00000
+//#define REGISTER_SPACE 4
+//#define NONCE_OFFSET 8*4
 #include <iostream>
-#include <array>
 
 using namespace std;
 
 bool* padding(bool *msg, int l);
-array<bool, 4> convert_hexa_digit__2_bool(char);
+int convert_binary_to_int(bool* data, int size);
+bool* convert_hexa_digit__2_bool(char);
 bool* convert_hexa_2_bool(string);
-array<bool, 8> convert_ascii_digit__2_bool(char ascii);
+bool* convert_ascii_digit__2_bool(char ascii);
 bool* convert_ascii_2_bool(string ascii);
 int number_of_zeros_on_padding(int msg_length);
 int padded_msg_size(int msg_length);
@@ -38,10 +45,14 @@ bool** initK();
 bool* SHA256(bool* msg, int msg_length);
 bool* encrypt(bool* msg, int msg_length);
 bool isBigger(const bool* first, const bool* second, int size);
+string reverseOn(string& str);
+string reverse(string str);
+bool* combine_bool_arrays(const bool* first, const bool* second, int first_size, int second_size);
 
 int main() {
     string msgStr = "abcd";
-    cout << "message: " << msgStr << endl;
+    reverseOn(msgStr);
+    //cout << "message: " << msgStr << endl;
     bool* msg = convert_ascii_2_bool(msgStr);
     bool *hash = SHA256(msg, (int) msgStr.length() * 8);
     cout << "SHA256: " << convert_binary_to_hex(hash, 256) << endl;
@@ -50,31 +61,72 @@ int main() {
     return 0;
 }
 
+string reverseOn(string& str){
+    char temp;
+    int l = str.length();
+    for(int i = 0; i < l/2; i++){
+        temp = str[i];
+        str[i] = str[l-i-1];
+        str[l-i-1] = temp;
+    }
+    return str;
+}
+
+string reverse(string str){
+    string res("");
+    for(int i = str.length()-1; i >= 0; i--){
+        res.push_back(str[i]);
+    }
+    return res;
+}
+
+void write_to_registers(bool* hash, bool* final_nonce){
+//    for(int i = 0; i < 8/*256/32*/; i++){
+//        Xil_Out32( (BASE + (u32)(i*REGISTER_SPACE)), (u32)convert_binary_to_int(&hash[i*32], 32));
+//    }
+//    Xil_Out32( (BASE + (u32)(NONCE_OFFSET)), (u32)convert_binary_to_int(final_nonce, 32));
+}
+
 bool* encrypt(bool* msg, int msg_length){
-    const string version = "02000000";
-    const string prev_block = "17975b97c18ed1f7e255adf297599b55330edab87803c8170100000000000000";
+    string version = "02000000";
+    string prev_block = "17975b97c18ed1f7e255adf297599b55330edab87803c8170100000000000000";
     string markel_root = convert_binary_to_hex(SHA256(msg, msg_length), 256);
-    const string timestamp = "358b0553";
-    const string diff = "5350f119";
-    string block_header_base = version + prev_block + markel_root + timestamp + diff;
-
-    const bool* target = convert_hexa_2_bool("1010101010101010101010101010101010101010101010101010101010101010");
-
+    string timestamp = "358b0553";
+    string diff = "5350f119";
+    string block_header_base = reverseOn(version) + reverseOn(prev_block)+ markel_root + reverseOn(timestamp) + reverseOn(diff);
+    bool* block_header_base_bool = convert_hexa_2_bool(block_header_base);
+//    const bool* target = convert_hexa_2_bool(reverse("00000000000002816E0000000000000000000000000000000000000000000000"));
+    const bool* target = convert_hexa_2_bool(reverse("001af34ed4ed31309dfdaff345ff6a2370faddeaaeeff3f31ad3bc32dec3de31"));
     bool* ONE = new bool[32];
     for(int i = 1; i < 32; i++) ONE[i] = 0;
     ONE[0] = 1;
-    
+
     bool* nonce = new bool[32];
     for(int i = 0; i < 32; i++) nonce[i] = 0;
 
     bool* hash;
 
     do {
-        string block_header = block_header_base + convert_binary_to_hex(nonce, 32);
-        hash = SHA256(SHA256(convert_hexa_2_bool(block_header), block_header.length()*4), 256);
+        bool* block_header = combine_bool_arrays(block_header_base_bool, nonce, block_header_base.length()*4, 32);
+        hash = SHA256(SHA256(block_header, block_header_base.length()*4 + 32), 256);
         nonce = add_array(nonce, ONE, 32);
+
+        // check nonce
+        bool nonce_is_over = true;
+        for(int i = 0; i < 32; i++){
+            if(!nonce[i]){
+                nonce_is_over = false;
+                break;
+            }
+        }
+        if(nonce_is_over){
+            cout << "nonce is over";
+            return hash;
+        }
     }
     while(isBigger(hash, target, 256));
+
+    write_to_registers(hash, nonce);
     return hash;
 }
 
@@ -93,16 +145,27 @@ bool isBigger(const bool* first, const bool* second, int size){
     return false;
 }
 
+bool* combine_bool_arrays(const bool* first, const bool* second, int first_size, int second_size){
+    auto* ret = new bool [first_size + second_size];
+    for(int i = 0; i < first_size; i++){
+        ret[i] = first[i];
+    }
+    for(int i = 0; i < second_size; i++){
+        ret[i+first_size] = second[i];
+    }
+    return ret;
+}
+
 bool** initial_hash(){
-    bool **hash_part = new bool *[64];
-    hash_part[0] = convert_hexa_2_bool("6a09e667");
-    hash_part[1] = convert_hexa_2_bool("bb67ae85");
-    hash_part[2] = convert_hexa_2_bool("3c6ef372");
-    hash_part[3] = convert_hexa_2_bool("a54ff53a");
-    hash_part[4] = convert_hexa_2_bool("510e527f");
-    hash_part[5] = convert_hexa_2_bool("9b05688c");
-    hash_part[6] = convert_hexa_2_bool("1f83d9ab");
-    hash_part[7] = convert_hexa_2_bool("5be0cd19");
+    bool **hash_part = new bool *[8];
+    hash_part[0] = convert_hexa_2_bool(reverse("6a09e667"));
+    hash_part[1] = convert_hexa_2_bool(reverse("bb67ae85"));
+    hash_part[2] = convert_hexa_2_bool(reverse("3c6ef372"));
+    hash_part[3] = convert_hexa_2_bool(reverse("a54ff53a"));
+    hash_part[4] = convert_hexa_2_bool(reverse("510e527f"));
+    hash_part[5] = convert_hexa_2_bool(reverse("9b05688c"));
+    hash_part[6] = convert_hexa_2_bool(reverse("1f83d9ab"));
+    hash_part[7] = convert_hexa_2_bool(reverse("5be0cd19"));
 
     return hash_part;
 }
@@ -166,12 +229,12 @@ bool** hash_computation(bool** w,bool** hash_part,bool** k){
 bool** inner_compression(bool* a, bool* b, bool* c, bool* d, bool* e, bool* f, bool* g, bool* h, const bool* kt, const bool* wt, const int size){
     bool* big_sigma1 = xor_array(xor_array(rot_n(e, size, 6), rot_n(e, size, 11), size), rot_n(e, size, 25), size);
     bool* chEFG = xor_array(
-                and_array(e, f, size),
-                xor_array( and_array(not_array(f, size), g, size)
-                         , and_array(not_array(e, size), g, size)
-                         , size
-                         )
-                , size
+            and_array(e, f, size),
+            xor_array( and_array(not_array(f, size), g, size)
+                    , and_array(not_array(e, size), g, size)
+                    , size
+            )
+            , size
     );
     bool* t2 = add_array(
             h,
@@ -188,7 +251,7 @@ bool** inner_compression(bool* a, bool* b, bool* c, bool* d, bool* e, bool* f, b
     );
 
     bool* big_sigma0 = xor_array(xor_array(xor_array(rot_n(a, size, 2), rot_n(a, size, 13), size), rot_n(a, size, 22), size),
-                              shf_n(a, size, 7), size);
+                                 shf_n(a, size, 7), size);
     bool* majABC = xor_array(
             and_array(a, c, size),
             xor_array( and_array(a, b, size)
@@ -199,8 +262,8 @@ bool** inner_compression(bool* a, bool* b, bool* c, bool* d, bool* e, bool* f, b
     );
     bool* cPlusD = add_array(c, d, size);
     bool* big_sigma2 = xor_array(xor_array(xor_array(rot_n(cPlusD, size, 2), rot_n(cPlusD, size, 3), size),
-                                             rot_n(cPlusD, size, 15), size),
-                                   shf_n(cPlusD, size, 5), size);
+                                           rot_n(cPlusD, size, 15), size),
+                                 shf_n(cPlusD, size, 5), size);
     bool* t1 = add_array(
             big_sigma0,
             add_array(
@@ -233,73 +296,73 @@ bool** inner_compression(bool* a, bool* b, bool* c, bool* d, bool* e, bool* f, b
 
 bool** initK(){
     bool ** k = new bool* [64];
-    k[0] = convert_hexa_2_bool("428a2f98");
-    k[1] = convert_hexa_2_bool("71374491");
-    k[2] = convert_hexa_2_bool("b5c0fbcf");
-    k[3] = convert_hexa_2_bool("e9b5dba5");
-    k[4] = convert_hexa_2_bool("3956c25b");
-    k[5] = convert_hexa_2_bool("59f111f1");
-    k[6] = convert_hexa_2_bool("923f82a4");
-    k[7] = convert_hexa_2_bool("ab1c5ed5");
-    k[8] = convert_hexa_2_bool("d807aa98");
-    k[9] = convert_hexa_2_bool("12835b01");
-    k[10] = convert_hexa_2_bool("243185be");
-    k[11] = convert_hexa_2_bool("550c7dc3");
-    k[12] = convert_hexa_2_bool("72be5d74");
-    k[13] = convert_hexa_2_bool("80deb1fe");
-    k[14] = convert_hexa_2_bool("9bdc06a7");
-    k[15] = convert_hexa_2_bool("c19bf174");
+    k[0] = convert_hexa_2_bool(reverse("428a2f98"));
+    k[1] = convert_hexa_2_bool(reverse("71374491"));
+    k[2] = convert_hexa_2_bool(reverse("b5c0fbcf"));
+    k[3] = convert_hexa_2_bool(reverse("e9b5dba5"));
+    k[4] = convert_hexa_2_bool(reverse("3956c25b"));
+    k[5] = convert_hexa_2_bool(reverse("59f111f1"));
+    k[6] = convert_hexa_2_bool(reverse("923f82a4"));
+    k[7] = convert_hexa_2_bool(reverse("ab1c5ed5"));
+    k[8] = convert_hexa_2_bool(reverse("d807aa98"));
+    k[9] = convert_hexa_2_bool(reverse("12835b01"));
+    k[10] = convert_hexa_2_bool(reverse("243185be"));
+    k[11] = convert_hexa_2_bool(reverse("550c7dc3"));
+    k[12] = convert_hexa_2_bool(reverse("72be5d74"));
+    k[13] = convert_hexa_2_bool(reverse("80deb1fe"));
+    k[14] = convert_hexa_2_bool(reverse("9bdc06a7"));
+    k[15] = convert_hexa_2_bool(reverse("c19bf174"));
 
-    k[16] = convert_hexa_2_bool("e49b69c1");
-    k[17] = convert_hexa_2_bool("efbe4786");
-    k[18] = convert_hexa_2_bool("0fc19dc6");
-    k[19] = convert_hexa_2_bool("240ca1cc");
-    k[20] = convert_hexa_2_bool("2de92c6f");
-    k[21] = convert_hexa_2_bool("4a7484aa");
-    k[22] = convert_hexa_2_bool("5cb0a9dc");
-    k[23] = convert_hexa_2_bool("76f988da");
-    k[24] = convert_hexa_2_bool("983e5152");
-    k[25] = convert_hexa_2_bool("a831c66d");
-    k[26] = convert_hexa_2_bool("b00327c8");
-    k[27] = convert_hexa_2_bool("bf597fc7");
-    k[28] = convert_hexa_2_bool("c6e00bf3");
-    k[29] = convert_hexa_2_bool("d5a79147");
-    k[30] = convert_hexa_2_bool("06ca6351");
-    k[31] = convert_hexa_2_bool("14292967");
+    k[16] = convert_hexa_2_bool(reverse("e49b69c1"));
+    k[17] = convert_hexa_2_bool(reverse("efbe4786"));
+    k[18] = convert_hexa_2_bool(reverse("0fc19dc6"));
+    k[19] = convert_hexa_2_bool(reverse("240ca1cc"));
+    k[20] = convert_hexa_2_bool(reverse("2de92c6f"));
+    k[21] = convert_hexa_2_bool(reverse("4a7484aa"));
+    k[22] = convert_hexa_2_bool(reverse("5cb0a9dc"));
+    k[23] = convert_hexa_2_bool(reverse("76f988da"));
+    k[24] = convert_hexa_2_bool(reverse("983e5152"));
+    k[25] = convert_hexa_2_bool(reverse("a831c66d"));
+    k[26] = convert_hexa_2_bool(reverse("b00327c8"));
+    k[27] = convert_hexa_2_bool(reverse("bf597fc7"));
+    k[28] = convert_hexa_2_bool(reverse("c6e00bf3"));
+    k[29] = convert_hexa_2_bool(reverse("d5a79147"));
+    k[30] = convert_hexa_2_bool(reverse("06ca6351"));
+    k[31] = convert_hexa_2_bool(reverse("14292967"));
 
-    k[32] = convert_hexa_2_bool("27b70a85");
-    k[33] = convert_hexa_2_bool("2e1b2138");
-    k[34] = convert_hexa_2_bool("4d2c6dfc");
-    k[35] = convert_hexa_2_bool("53380d13");
-    k[36] = convert_hexa_2_bool("650a7354");
-    k[37] = convert_hexa_2_bool("766a0abb");
-    k[38] = convert_hexa_2_bool("81c2c92e");
-    k[39] = convert_hexa_2_bool("92722c85");
-    k[40] = convert_hexa_2_bool("a2bfe8a1");
-    k[41] = convert_hexa_2_bool("a81a664b");
-    k[42] = convert_hexa_2_bool("c24b8b70");
-    k[43] = convert_hexa_2_bool("c76c51a3");
-    k[44] = convert_hexa_2_bool("d192e819");
-    k[45] = convert_hexa_2_bool("d6990624");
-    k[46] = convert_hexa_2_bool("f40e3585");
-    k[47] = convert_hexa_2_bool("106aa070");
+    k[32] = convert_hexa_2_bool(reverse("27b70a85"));
+    k[33] = convert_hexa_2_bool(reverse("2e1b2138"));
+    k[34] = convert_hexa_2_bool(reverse("4d2c6dfc"));
+    k[35] = convert_hexa_2_bool(reverse("53380d13"));
+    k[36] = convert_hexa_2_bool(reverse("650a7354"));
+    k[37] = convert_hexa_2_bool(reverse("766a0abb"));
+    k[38] = convert_hexa_2_bool(reverse("81c2c92e"));
+    k[39] = convert_hexa_2_bool(reverse("92722c85"));
+    k[40] = convert_hexa_2_bool(reverse("a2bfe8a1"));
+    k[41] = convert_hexa_2_bool(reverse("a81a664b"));
+    k[42] = convert_hexa_2_bool(reverse("c24b8b70"));
+    k[43] = convert_hexa_2_bool(reverse("c76c51a3"));
+    k[44] = convert_hexa_2_bool(reverse("d192e819"));
+    k[45] = convert_hexa_2_bool(reverse("d6990624"));
+    k[46] = convert_hexa_2_bool(reverse("f40e3585"));
+    k[47] = convert_hexa_2_bool(reverse("106aa070"));
 
-    k[48] = convert_hexa_2_bool("19a4c116");
-    k[49] = convert_hexa_2_bool("1e376c08");
-    k[50] = convert_hexa_2_bool("2748774c");
-    k[51] = convert_hexa_2_bool("34b0bcb5");
-    k[52] = convert_hexa_2_bool("391c0cb3");
-    k[53] = convert_hexa_2_bool("4ed8aa4a");
-    k[54] = convert_hexa_2_bool("5b9cca4f");
-    k[55] = convert_hexa_2_bool("682e6ff3");
-    k[56] = convert_hexa_2_bool("748f82ee");
-    k[57] = convert_hexa_2_bool("78a5636f");
-    k[58] = convert_hexa_2_bool("84c87814");
-    k[59] = convert_hexa_2_bool("8cc70208");
-    k[60] = convert_hexa_2_bool("90befffa");
-    k[61] = convert_hexa_2_bool("a4506ceb");
-    k[62] = convert_hexa_2_bool("be49a3f7");
-    k[63] = convert_hexa_2_bool("c67178f2");
+    k[48] = convert_hexa_2_bool(reverse("19a4c116"));
+    k[49] = convert_hexa_2_bool(reverse("1e376c08"));
+    k[50] = convert_hexa_2_bool(reverse("2748774c"));
+    k[51] = convert_hexa_2_bool(reverse("34b0bcb5"));
+    k[52] = convert_hexa_2_bool(reverse("391c0cb3"));
+    k[53] = convert_hexa_2_bool(reverse("4ed8aa4a"));
+    k[54] = convert_hexa_2_bool(reverse("5b9cca4f"));
+    k[55] = convert_hexa_2_bool(reverse("682e6ff3"));
+    k[56] = convert_hexa_2_bool(reverse("748f82ee"));
+    k[57] = convert_hexa_2_bool(reverse("78a5636f"));
+    k[58] = convert_hexa_2_bool(reverse("84c87814"));
+    k[59] = convert_hexa_2_bool(reverse("8cc70208"));
+    k[60] = convert_hexa_2_bool(reverse("90befffa"));
+    k[61] = convert_hexa_2_bool(reverse("a4506ceb"));
+    k[62] = convert_hexa_2_bool(reverse("be49a3f7"));
+    k[63] = convert_hexa_2_bool(reverse("c67178f2"));
 
     return k;
 
@@ -383,11 +446,10 @@ bool* shf_n(bool *data, int size, int n){
     for(int i = 0;i < n; i++){
         shf_res = shf(shf_res,size);
     }
-
     return shf_res;
 }
 
-bool* rot(bool* data,int size){
+bool* rot(bool* data,int size){ //data= "11110"
     bool * rot_data = new bool[size];
     rot_data[size-1]=data[0];
     for(int i = 1;i < size;i++){
@@ -485,7 +547,7 @@ bool* convert_hexa_2_bool(string hex){
     int hexLength = hex.length();
     bool* ret = new bool [hexLength*4];
     for(int i = 0; i < hexLength; i++){
-        array<bool, 4> dig = convert_hexa_digit__2_bool(hex[i]);
+        bool* dig = convert_hexa_digit__2_bool(hex[i]);
         for(int j = 0; j < 4; j++)
         {
             ret[i*4+j] = dig[j];
@@ -494,33 +556,35 @@ bool* convert_hexa_2_bool(string hex){
     return &ret[0];
 }
 
-array<bool, 4> convert_hexa_digit__2_bool(char hex){
+bool* convert_hexa_digit__2_bool(char hex){
+    bool* res = new bool[4];
     switch (hex){
-        case '0': return {0,0,0,0};
-        case '1': return {0,0,0,1};
-        case '2': return {0,0,1,0};
-        case '3': return {0,0,1,1};
-        case '4': return {0,1,0,0};
-        case '5': return {0,1,0,1};
-        case '6': return {0,1,1,0};
-        case '7': return {0,1,1,1};
-        case '8': return {1,0,0,0};
-        case '9': return {1,0,0,1};
-        case 'a': return {1,0,1,0};
-        case 'b': return {1,0,1,1};
-        case 'c': return {1,1,0,0};
-        case 'd': return {1,1,0,1};
-        case 'e': return {1,1,1,0};
-        case 'f': return {1,1,1,1};
-        default:  return {0,0,0,0};
+        case '0': res[0] = 0; res[1] = 0; res[2] = 0; res[3] = 0; break;
+        case '1': res[0] = 1; res[1] = 0; res[2] = 0; res[3] = 0; break;
+        case '2': res[0] = 0; res[1] = 1; res[2] = 0; res[3] = 0; break;
+        case '3': res[0] = 1; res[1] = 1; res[2] = 0; res[3] = 0; break;
+        case '4': res[0] = 0; res[1] = 0; res[2] = 1; res[3] = 0; break;
+        case '5': res[0] = 1; res[1] = 0; res[2] = 1; res[3] = 0; break;
+        case '6': res[0] = 0; res[1] = 1; res[2] = 1; res[3] = 0; break;
+        case '7': res[0] = 1; res[1] = 1; res[2] = 1; res[3] = 0; break;
+        case '8': res[0] = 0; res[1] = 0; res[2] = 0; res[3] = 1; break;
+        case '9': res[0] = 1; res[1] = 0; res[2] = 0; res[3] = 1; break;
+        case 'a': res[0] = 0; res[1] = 1; res[2] = 0; res[3] = 1; break;
+        case 'b': res[0] = 1; res[1] = 1; res[2] = 0; res[3] = 1; break;
+        case 'c': res[0] = 0; res[1] = 0; res[2] = 1; res[3] = 1; break;
+        case 'd': res[0] = 1; res[1] = 0; res[2] = 1; res[3] = 1; break;
+        case 'e': res[0] = 0; res[1] = 1; res[2] = 1; res[3] = 1; break;
+        case 'f': res[0] = 1; res[1] = 1; res[2] = 1; res[3] = 1; break;
+        default:  res[0] = 0; res[1] = 0; res[2] = 0; res[3] = 0; break;
     }
+    return res;
 }
 
 bool* convert_ascii_2_bool(string ascii){
     int hexLength = ascii.length();
     bool* ret = new bool [hexLength*8];
     for(int i = 0; i < hexLength; i++){
-        array<bool, 8> dig = convert_ascii_digit__2_bool(ascii[i]);
+        bool* dig = convert_ascii_digit__2_bool(ascii[i]);
         for(int j = 0; j < 8; j++)
         {
             ret[i*8+j] = dig[j];
@@ -529,10 +593,11 @@ bool* convert_ascii_2_bool(string ascii){
     return &ret[0];
 }
 
-array<bool, 8> convert_ascii_digit__2_bool(char ascii){
+bool* convert_ascii_digit__2_bool(char ascii){
     int ascii_code = (int)ascii;
     int i = 0;
-    array<bool, 8> res = {0,0,0,0,0,0,0,0};
+    bool* res = new bool[8];
+    for(int i = 0; i < 8; i++) res[i] = 0;
     while(ascii_code > 0){
         if(ascii_code % 2 == 1) res[i] = 1;
         i++;
@@ -541,6 +606,17 @@ array<bool, 8> convert_ascii_digit__2_bool(char ascii){
     return res;
 }
 
+int convert_binary_to_int(bool* data, int size){
+    int res = 0;
+    int pow = 1;
+    for(int i = 0; i < size; i++){
+        if(data[size]){
+            res += pow;
+        }
+        pow *= 2;
+    }
+    return res;
+}
 char convert_binary_to_hex_digit(bool* data, int start){
     int val = 0;
     val = data[start] ? val+1 : val;
